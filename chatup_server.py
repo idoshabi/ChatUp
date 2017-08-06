@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from contextlib import contextmanager
 from functools import partial
-from gmail_utils import login, get_contacts
+from gmail_utils import login, fetch_contacts
 import requests
 import sqlite3
 
@@ -10,6 +10,7 @@ CONTACT_DATA_URL = 'http://picasaweb.google.com/data/entry/api/user/{}?alt=json'
 CHATUP_DB_NAME = 'chatup_db.db'
 NUM_OF_PREDEFINED_SUBCATEGORIES = 3
 EMPTY_AVATAR = "http://www.rammandir.ca/sites/default/files/default_images/defaul-avatar_0.jpg"
+CONTACTS_COUNT = 10
 
 
 @contextmanager
@@ -139,21 +140,66 @@ def switch_user_favorites_sub_categories(user_id):
     return jsonify(return_dict)
 
 
-@app.route('/users/<int:user_id>/contacts/<int:contact_id>')
-def contact(user_id, contact_id):
-    contact = get_contact(user_id, contact_id)
+# fetches CONTACTS_COUNT contacts from emails. this can take a while, and should be preformed as
+# little as possible, perhaps for backend internal use only
+@app.route('/users/<int:user_id>/contacts', methods=['POST'])
+def contacts_fetch(user_id):
+    with chatup_db_context() as cursor:
+        email = get_first_field_value_by_id(cursor,
+                                            entry_id=user_id,
+                                            table_name='users',
+                                            field_name='email')
+        password = get_first_field_value_by_id(cursor,
+                                               entry_id=user_id,
+                                               table_name='users',
+                                               field_name='password')
+    fetch_and_insert_contacts_to_db(email, password, CONTACTS_COUNT)
 
-    return jsonify(contact)
+    return_dict = {}
+    return jsonify(return_dict)
+
+
+# Should only be called after contacts_fetch call
+@app.route('/users/<int:user_id>/contacts', methods=['GET'])
+def get_contacts(user_id):
+    with chatup_db_context() as cursor:
+        contacts = get_contacts_from_db(cursor, user_id)
+
+    return_dict = {"contacts": contacts}
+    return jsonify(return_dict)
+
+
+@app.route('/users/<int:user_id>/contacts/set_favorite', methods=['POST'])
+def set_contact_favorite(user_id):
+    contact_id = request.form['contact_id']
+    contact_id = int(contact_id)
+
+    with chatup_db_context() as cursor:
+        add_contact_to_favorites(cursor, contact_id)
+
+    return_dict = {}
+    return jsonify(return_dict)
+
+
+@app.route('/users/<int:user_id>/contacts/switch_favorites', methods=['POST'])
+def switch_favorites(user_id):
+    contact_id_to_remove = request.form['contact_id_to_remove']
+    contact_id_to_remove = int(contact_id_to_remove)
+    contact_id_to_add = request.form['contact_id_to_add']
+    contact_id_to_add = int(contact_id_to_add)
+
+    with chatup_db_context() as cursor:
+        add_contact_to_favorites(cursor, contact_id_to_add)
+        remove_contact_from_favorites(cursor, contact_id_to_remove)
+
+    return_dict = {}
+    return jsonify(return_dict)
 
 
 # ToDo: RSS
 def get_topics_by_sub_category_name(sub_category_name, count):
     # sub_category_name = sub_category_name.lower()
     # But its better to make sure it ignores case
-    raise NotImplemented()
-
-
-def get_contact(user_id, contact_id):
     raise NotImplemented()
 
 
@@ -173,8 +219,10 @@ def get_user_name(email_address):
 
     data = requests.get(CONTACT_DATA_URL.format(email_address))
     try:
-        return data.json()["entry"]["gphoto$nickname"]['$t']
+        name = data.json()["entry"]["gphoto$nickname"]['$t']
+        assert not name.isdigit()
 
+        return name
     except Exception:
         return email_address
 
@@ -284,17 +332,41 @@ def get_predefined_recommended_sub_categories(cursor):
     return sub_categories
 
 
-def insert_contacts_to_database(email_address, password, count):
+def get_contacts_from_db(cursor, user_id, only_favorites=False):
+    query = "select id, name, image_src from contacts where user_id={}".format(user_id)
+    if only_favorites:
+        query += " and is_favorite > 0"
+
+    query = cursor.execute(query)
+
+    contacts = []
+    for row in query:
+        id, name, image_src = row
+        contacts.append({'id': id, 'name': name, 'image_src': image_src})
+
+    return contacts
+
+
+def add_contact_to_favorites(cursor, contact_id):
+    cursor.execute("update contacts set is_favorite={} where id={}".format(1, contact_id))
+
+
+def remove_contact_from_favorites(cursor, contact_id):
+    cursor.execute("update contacts set is_favorite={} where id={}".format(0, contact_id))
+
+
+def fetch_and_insert_contacts_to_db(email_address, password, count):
     gmail_object = login(email_address, password)
-    contacts = get_contacts(gmail_object, email_address, count=count)
+    contacts = fetch_contacts(gmail_object, email_address, count=count)
 
     for contact_email in contacts:
         with chatup_db_context() as cursor:
             user_id = get_user_id_by_email(cursor, email_address)
             image_src = get_user_image(contact_email)
-            name = get_user_image(contact_email)
+            name = get_user_name(contact_email)
             cursor.execute(
-                "insert into contacts (id, user_id, contact_email, image_src, name, is_favorite) \
+                "insert or ignore into contacts \
+                (id, user_id, contact_email, image_src, name, is_favorite) \
                 values (NULL, {}, '{}', '{}', '{}', 0)".format(user_id,
                                                                contact_email,
                                                                image_src,
@@ -309,7 +381,7 @@ do("insert into predefined_recommended_sub_categories (id, sub_category_id) valu
 
 
 do("create table users (id integer primary key autoincrement, email text unique, password text)")
-do("create table contacts (id integer primary key autoincrement, user_id integer, contact_email text unique, image_src text, name text, is_favorite integer)")
+do("create table contacts (id integer primary key autoincrement, user_id integer, contact_email text, image_src text, name text, is_favorite integer, unique (user_id, contact_email) on conflict replace)")
 do("create table sub_categories (id integer primary key autoincrement, sub_category_name text unique, main_category_name text)")
 do("create table favorite_sub_categories (id integer primary key autoincrement, user_id integer, sub_category_id integer)")
 do("create table predefined_recommended_sub_categories (id integer primary key autoincrement, sub_category_id integer)")
@@ -325,7 +397,7 @@ def do(func, *args, **kwargs):
 do(get_sub_categories_by_main_category, main_category="sport")
 do(get_user_favorites_subcategories, user_id=1)
 do(get_predefined_recommended_sub_categories)
-
-
+do(get_contacts_from_db, user_id=1, only_favorites=False)
+do(get_contacts_from_db, user_id=1, only_favorites=True)
 
 """

@@ -46,7 +46,7 @@ def strip_from_html(email_html):
     return soup.get_text()
 
 
-def get_contacts(gmail_object, email_address, count=10, inbox_name="INBOX"):
+def fetch_contacts(gmail_object, email_address, count=10, inbox_name="INBOX"):
     gmail_object.select(inbox_name)
     contacts_list = []
     result, data = gmail_object.search(None, 'ALL')
@@ -66,7 +66,4 @@ def get_contacts(gmail_object, email_address, count=10, inbox_name="INBOX"):
             contacts_list.append(address)
 
             if len(contacts_list) == count:
-                return set(contacts_list)
-
-
-# @idoShabi, continue from http://www.christianpeccei.com/textmining/ for text mining
+                return contacts_list
