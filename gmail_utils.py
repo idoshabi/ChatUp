@@ -6,7 +6,7 @@ import textrank
 from bs4 import BeautifulSoup
 
 FORBIDDEN_SUBJECT_STRINGS = ["=?UTF-8"]
-STOP_WORDS = ['@', ' Re ', 'Re:', 'Fwd']
+STOP_WORDS = ['@', ' Re ', 'Re:', 'Fwd', ' |', '|', ' |, |']
 KEYWORDS_COUNT = 15
 SUBJECTS_COUNT = 35
 CONTACTS_COUNT = 20
@@ -46,20 +46,38 @@ def get_email_subject_by_id(gmail_object, email_id):
     return mail["Subject"]
 
 
+def strip_key_phrases(key_phrases_set):
+    for phrase in key_phrases_set:
+        key_phrases_set.discard(phrase)
+        key_phrases_set.add(phrase.strip())
+
+    return key_phrases_set
+
+
+def remove_duplicate_while_preserving_order(elements):
+    seen = set()
+    seen_add = seen.add
+    return [x for x in elements if not (x in seen or seen_add(x))]
+
+
 def get_email_keywords_by_sender(gmail_object, sender_email, count=KEYWORDS_COUNT):
-    # Subject count is a bit higher than keyword count since not all subjects are fit for keywords so we 'loose' some of them
     subjects = get_email_subjects_list_by_sender(gmail_object, sender_email, SUBJECTS_COUNT)
     keywords = []
     for subject in subjects:
-        subject_keywords = ', '.join(textrank.extract_key_phrases(subject))
+        key_phrases = textrank.extract_key_phrases(subject)
+        key_phrases = strip_key_phrases(key_phrases)
+        subject_keywords = ', '.join(key_phrases)
         if len(subject_keywords) > 0:
             keywords.append(subject_keywords)
 
-        unique_keywords = list(set(keywords))
+            for chopped_phrase in key_phrases:
+                keywords.append(chopped_phrase)
+
+        unique_keywords = remove_duplicate_while_preserving_order(keywords)
         if len(unique_keywords) == count:
             return unique_keywords
 
-    return list(set(keywords))
+    return remove_duplicate_while_preserving_order(keywords)
 
 
 def clean_subject(subject):
