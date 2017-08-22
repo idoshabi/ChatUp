@@ -92,7 +92,7 @@ def matching_keywords(filter_keywords, subject):
         return True
     else:
         keyword_list = filter_keywords.split(',')
-        return any(re.search(keyword, subject, re.IGNORECASE) for keyword in keyword_list)
+        return all(re.search(keyword, subject, re.IGNORECASE) for keyword in keyword_list)
 
 
 def get_email_subjects_list_by_sender(gmail_object, sender_email, count, filter_keywords=None):
