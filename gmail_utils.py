@@ -92,7 +92,7 @@ def matching_keywords(filter_keywords, subject):
     if filter_keywords is None:
         return True
     else:
-        keyword_list = filter_keywords.split(',')
+        keyword_list = re.findall(r"[\w']+", filter_keywords)
         return all(re.search(keyword, subject, re.IGNORECASE) for keyword in keyword_list)
 
 
@@ -107,9 +107,9 @@ def get_email_subjects_list_by_sender(gmail_object, sender_email, count, filter_
             subjects.append(subject)
 
         if len(subjects) == count:
-            return subjects
+            return remove_duplicate_while_preserving_order(subjects)
 
-    return subjects
+    return remove_duplicate_while_preserving_order(subjects)
 
 
 def get_email_text(gmail_object, email_id):
