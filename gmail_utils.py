@@ -83,6 +83,7 @@ def get_email_keywords_by_sender(gmail_object, sender_email, count=KEYWORDS_COUN
 def clean_subject(subject):
     for stop_word in STOP_WORDS:
         subject = subject.replace(stop_word, "")
+        subject = subject.strip()
 
     return subject
 
