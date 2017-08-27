@@ -9,7 +9,7 @@ FORBIDDEN_SUBJECT_STRINGS = ["=?UTF-8"]
 STOP_WORDS = ['@', ' Re ', 'Re:', 'Fwd', ' |', '|', ' |, |']
 KEYWORDS_COUNT = 15
 SUBJECTS_COUNT = 35
-CONTACTS_COUNT = 20
+CONTACTS_COUNT = 30
 
 
 def gmail_login(email_address, password):
@@ -134,6 +134,7 @@ def fetch_contacts(gmail_object, email_address, count=CONTACTS_COUNT, inbox_name
     result, data = gmail_object.search(None, 'ALL')
     ids = data[0]
     id_list = ids.split()  # I think it will be good to shuffle here, or to reverse the array so that the more recent email will pop up first
+    id_list.reverse()
 
     for i in id_list:
         typ, data = gmail_object.fetch(i, '(RFC822)')
