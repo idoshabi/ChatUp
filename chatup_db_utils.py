@@ -1,5 +1,6 @@
 import requests
 import sqlite3
+import feedparser
 
 from contextlib import contextmanager
 from functools import partial
@@ -9,6 +10,32 @@ CONTACT_DATA_URL = 'http://picasaweb.google.com/data/entry/api/user/{}?alt=json'
 CHATUP_DB_NAME = 'chatup_db.db'
 NUM_OF_PREDEFINED_SUBCATEGORIES = 3
 EMPTY_AVATAR = "http://www.rammandir.ca/sites/default/files/default_images/defaul-avatar_0.jpg"
+
+map_ideas_name = "Ideas"
+rss_map_ynet = {'News': 'http://www.ynet.co.il/Integration/StoryRss3.xml',
+                'Food': 'http://www.ynet.co.il/Integration/StoryRss975.xml',
+                'Sport': 'http://www.ynet.co.il/Integration/StoryRss3.xml',
+                'Culture': 'http://www.ynet.co.il/Integration/StoryRss538.xml',
+                'Travel': 'http://www.ynet.co.il/Integration/StoryRss598.xml',
+                'Lifesyle': 'http://www.ynet.co.il/Integration/StoryRss4104.xml'}
+
+rss_map_walla = {'Quick_News': 'http://rss.walla.co.il/?w=/1/22/0/@rss.e',
+                 'General News': 'http://rss.walla.co.il/?w=/1/0/12/@rss.e',
+                 'Food': 'http://rss.walla.co.il/?w=/9/905/0/@rss.e',
+                 'General Sport': 'http://rss.walla.co.il/?w=/3/0/12/@rss.el',
+                 'Basketball': 'http://rss.walla.co.il/?w=/3/151/0/@rss.e',
+                 'Soccer': 'http://rss.walla.co.il/?w=/3/156/0/@rss.e',
+                 'Motors': 'http://rss.walla.co.il/?w=/31/0/12/@rss.e',
+                 'Technology': 'http://rss.walla.co.il/?w=/6/0/12/@rss.e',
+                 'Culture': 'http://rss.walla.co.il/?w=/4/0/12/@rss.e',
+                 'Fashion': 'http://rss.walla.co.il/?w=/24/2121/0/@rss.e',
+                 'Celebrities': 'http://rss.walla.co.il/?w=/22/0/12/@rss.e',
+                 'Health': 'http://rss.walla.co.il/?w=/14/2500/0/@rss.e',
+                 'Sexuality': 'http://rss.walla.co.il/?w=/139/1877/0/@rss.e',
+                 'General Travel': 'http://rss.walla.co.il/?w=/14/2500/0/@rss.e',
+                 'Jewish': 'http://rss.walla.co.il/?w=/138/0/12/@rss.e',
+                 'Business': 'http://rss.walla.co.il/?w=/2/0/12/@rss.e',
+                 'Home Design': 'http://rss.walla.co.il/?w=/35/3237/0/@rss.e'}
 
 
 @contextmanager
@@ -26,13 +53,28 @@ def db_context(db_name):
 chatup_db_context = partial(db_context, db_name=CHATUP_DB_NAME)
 
 
-# ToDo: RSS
-def get_topics_by_sub_category_name(sub_category_name, count):
-    # sub_category_name = sub_category_name.lower()
-    # But its better to make sure it ignores case
+############################ RSS
 
-    # Here we get x (x=count) sentences by sub_category_name
-    return ["SHABI NEEDS TO IMPLEMENT sub category {}".format(sub_category_name)]
+def get_walla_rss_by_subjet(subject, count):
+    subject = rss_map_walla.get(subject)
+    xml_sheet = feedparser.parse(subject)
+    topic_list = []
+    for topic in xml_sheet.entries:
+        topic_list.append(topic['title'])
+        # decrease by 1
+        count -= 1
+        if count == 0:
+            break
+    return topic_list
+
+
+def get_topics_by_sub_category_name(sub_category_name, count):
+    subjects = get_walla_rss_by_subjet(sub_category_name, count)
+    topic_map = {map_ideas_name: subjects}
+    return topic_map
+
+
+############################ RSS
 
 
 def get_user_image(email_address):
