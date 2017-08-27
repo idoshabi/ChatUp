@@ -5,7 +5,7 @@ from chatup_db_utils import *
 from gmail_utils import gmail_login, get_email_keywords_by_sender, get_email_subjects_list_by_sender
 
 app = Flask(__name__)
-CONTACTS_COUNT = 10
+CONTACTS_COUNT = 30
 TOPICS_COUNT = 30
 
 
