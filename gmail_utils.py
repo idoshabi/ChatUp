@@ -5,7 +5,7 @@ import textrank
 
 from bs4 import BeautifulSoup
 
-FORBIDDEN_SUBJECT_STRINGS = ["=?UTF-8"]
+FORBIDDEN_SUBJECT_STRINGS = ["UTF-8"]
 STOP_WORDS = ['@', ' Re ', 'Re:', 'Fwd', ' |', '|', ' |, |']
 KEYWORDS_COUNT = 15
 SUBJECTS_COUNT = 35
@@ -64,6 +64,9 @@ def get_email_keywords_by_sender(gmail_object, sender_email, count=KEYWORDS_COUN
     subjects = get_email_subjects_list_by_sender(gmail_object, sender_email, SUBJECTS_COUNT)
     keywords = []
     for subject in subjects:
+        if any(re.search(keyword, subject, re.IGNORECASE) for keyword in FORBIDDEN_SUBJECT_STRINGS):
+            break
+
         key_phrases = textrank.extract_key_phrases(subject)
         key_phrases = strip_key_phrases(key_phrases)
         subject_keywords = ', '.join(key_phrases)
