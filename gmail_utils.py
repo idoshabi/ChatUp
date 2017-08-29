@@ -1,12 +1,14 @@
+import quopri
 import re
 import email
 import imaplib
+import StringIO
 import textrank
 
 from bs4 import BeautifulSoup
 
 FORBIDDEN_SUBJECT_STRINGS = ["UTF-8"]
-STOP_WORDS = ['@', ' Re ', 'Re:', 'Fwd', ' |', '|', ' |, |']
+STOP_WORDS = ['@', ' Re ', 'Re:', 'Fwd', ' |', '|', ' |, |', '=?utf-8?Q?', '?=', '?=', 'UTF-8']
 KEYWORDS_COUNT = 15
 SUBJECTS_COUNT = 35
 CONTACTS_COUNT = 30
@@ -64,10 +66,11 @@ def get_email_keywords_by_sender(gmail_object, sender_email, count=KEYWORDS_COUN
     subjects = get_email_subjects_list_by_sender(gmail_object, sender_email, SUBJECTS_COUNT)
     keywords = []
     for subject in subjects:
-        if any(re.search(keyword, subject, re.IGNORECASE) for keyword in FORBIDDEN_SUBJECT_STRINGS):
+        try:
+            key_phrases = textrank.extract_key_phrases(subject)
+        except Exception:
             break
 
-        key_phrases = textrank.extract_key_phrases(subject)
         key_phrases = strip_key_phrases(key_phrases)
         subject_keywords = ', '.join(key_phrases)
         if len(subject_keywords) > 0:
@@ -84,9 +87,14 @@ def get_email_keywords_by_sender(gmail_object, sender_email, count=KEYWORDS_COUN
 
 
 def clean_subject(subject):
+    subject, encoding = email.Header.decode_header(subject)[0]
     for stop_word in STOP_WORDS:
         subject = subject.replace(stop_word, "")
         subject = subject.strip()
+
+    # subject = decode_utf8_string(subject)
+    # subject = subject.replace("_", " ")
+    # subject = subject.strip()
 
     return subject
 
@@ -104,8 +112,7 @@ def get_email_subjects_list_by_sender(gmail_object, sender_email, count, filter_
     subjects = []
     for email_id in email_ids:
         subject = get_email_subject_by_id(gmail_object, email_id)
-        if not any(extension in subject for extension in FORBIDDEN_SUBJECT_STRINGS) and \
-                matching_keywords(filter_keywords, subject):
+        if matching_keywords(filter_keywords, subject):
             subject = clean_subject(subject)
             subjects.append(subject)
 
@@ -153,3 +160,9 @@ def fetch_contacts(gmail_object, email_address, count=CONTACTS_COUNT, inbox_name
 
             if len(contacts_list) == count:
                 return contacts_list
+
+
+def decode_utf8_string(instring):
+    outfile = StringIO.StringIO()
+    quopri.decode(StringIO.StringIO(instring), outfile)
+    return outfile.getvalue()
