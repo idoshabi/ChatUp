@@ -7,7 +7,6 @@ import textrank
 
 from bs4 import BeautifulSoup
 
-FORBIDDEN_SUBJECT_STRINGS = ["UTF-8"]
 STOP_WORDS = ['@', ' Re ', 'Re:', 'Fwd', ' |', '|', ' |, |', '=?utf-8?Q?', '?=', '?=', 'UTF-8']
 KEYWORDS_COUNT = 15
 SUBJECTS_COUNT = 35
@@ -36,6 +35,7 @@ def get_inbox_email_ids_by_sender(gmail_object, sender_email, inbox_name="INBOX"
     resp, items = gmail_object.search(None, '(FROM "{}")'.format(sender_email))
     items = items[
         0].split()  # I think it will be good to shuffle here, or to reverse the array so that the more recent email will pop up first
+    items.reverse()
 
     return items
 
@@ -86,7 +86,7 @@ def get_email_keywords_by_sender(gmail_object, sender_email, count=KEYWORDS_COUN
     return remove_duplicate_while_preserving_order(keywords)
 
 
-def clean_subject(subject):
+def clean_and_decode_subject(subject):
     subject, encoding = email.Header.decode_header(subject)[0]
     for stop_word in STOP_WORDS:
         subject = subject.replace(stop_word, "")
@@ -113,7 +113,7 @@ def get_email_subjects_list_by_sender(gmail_object, sender_email, count, filter_
     for email_id in email_ids:
         subject = get_email_subject_by_id(gmail_object, email_id)
         if matching_keywords(filter_keywords, subject):
-            subject = clean_subject(subject)
+            subject = clean_and_decode_subject(subject)
             subjects.append(subject)
 
         if len(subjects) == count:
@@ -143,7 +143,7 @@ def fetch_contacts(gmail_object, email_address, count=CONTACTS_COUNT, inbox_name
     contacts_list = []
     result, data = gmail_object.search(None, 'ALL')
     ids = data[0]
-    id_list = ids.split()  # I think it will be good to shuffle here, or to reverse the array so that the more recent email will pop up first
+    id_list = ids.split()
     id_list.reverse()
 
     for i in id_list:
