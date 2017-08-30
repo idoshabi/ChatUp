@@ -41,6 +41,8 @@ rss_map_walla = {'Quick_News': 'http://rss.walla.co.il/?w=/1/22/0/@rss.e',
 @contextmanager
 def db_context(db_name):
     conn = sqlite3.connect(db_name)
+    conn.text_factory = str
+
     cursor = conn.cursor()
     try:
         yield cursor
@@ -90,10 +92,13 @@ def get_user_image(email_address):
 
 def get_user_name(email_address):
     email_address = email_address.lower()
+    email_address = email_address.replace("'", "")
 
     data = requests.get(CONTACT_DATA_URL.format(email_address))
     try:
         name = data.json()["entry"]["gphoto$nickname"]['$t']
+        name = name.encode('utf-8')
+        name = name.replace("'", "")
         assert not name.isdigit()
 
         return name
@@ -272,10 +277,10 @@ def fetch_and_insert_contacts_to_db(user_id, count):
             cursor.execute(
                 "insert or ignore into contacts \
                 (id, user_id, contact_email, image_src, name, is_favorite) \
-                values (NULL, {}, '{}', '{}', '{}', 0)".format(user_id,
-                                                               contact_email,
-                                                               image_src,
-                                                               name.encode('utf-8')))
+                values (NULL, ?, ?, ?, ?, 0)", (user_id,
+                                                contact_email,
+                                                image_src,
+                                                name))
 
 
 """
