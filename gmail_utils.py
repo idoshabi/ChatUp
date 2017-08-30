@@ -135,18 +135,28 @@ def fetch_contacts(gmail_object, email_address, count=CONTACTS_COUNT, inbox_name
     ids = data[0]
     id_list = ids.split()  # I think it will be good to shuffle here, or to reverse the array so that the more recent email will pop up first
     id_list.reverse()
+    skipped = []
 
     for i in id_list:
-        typ, data = gmail_object.fetch(i, '(RFC822)')
+        if i in skipped:
+            continue
 
-        for response_part in data:
-            if isinstance(response_part, tuple):
-                msg = email.message_from_string(response_part[1])
-                sender = msg['from'].split()[-1]
-                address = re.sub(r'[<>]', '', sender)
+        try:
+            typ, data = gmail_object.fetch(i, '(RFC822)')
 
-        if not re.search(r'' + re.escape(email_address), address) and not address in contacts_list:
-            contacts_list.append(address)
+            for response_part in data:
+                if isinstance(response_part, tuple):
+                    import email
+                    msg = email.message_from_string(response_part[1])
+                    sender = msg['from'].split()[-1]
+                    address = re.sub(r'[<>]', '', sender)
 
-            if len(contacts_list) == count:
-                return contacts_list
+            if not re.search(r'' + re.escape(email_address), address) and not address in contacts_list:
+                contacts_list.append(address)
+                skipped.extend(get_inbox_email_ids_by_sender(gmail_object, address))
+
+                if len(contacts_list) == count:
+                    return contacts_list
+
+        except Exception:
+            continue
