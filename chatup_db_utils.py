@@ -19,23 +19,85 @@ rss_map_ynet = {'News': 'http://www.ynet.co.il/Integration/StoryRss3.xml',
                 'Travel': 'http://www.ynet.co.il/Integration/StoryRss598.xml',
                 'Lifesyle': 'http://www.ynet.co.il/Integration/StoryRss4104.xml'}
 
-rss_map_walla = {'Quick_News': 'http://rss.walla.co.il/?w=/1/22/0/@rss.e',
-                 'General News': 'http://rss.walla.co.il/?w=/1/0/12/@rss.e',
-                 'Food': 'http://rss.walla.co.il/?w=/9/905/0/@rss.e',
-                 'General Sport': 'http://rss.walla.co.il/?w=/3/0/12/@rss.el',
-                 'Basketball': 'http://rss.walla.co.il/?w=/3/151/0/@rss.e',
-                 'Soccer': 'http://rss.walla.co.il/?w=/3/156/0/@rss.e',
-                 'Motors': 'http://rss.walla.co.il/?w=/31/0/12/@rss.e',
-                 'Technology': 'http://rss.walla.co.il/?w=/6/0/12/@rss.e',
-                 'Culture': 'http://rss.walla.co.il/?w=/4/0/12/@rss.e',
-                 'Fashion': 'http://rss.walla.co.il/?w=/24/2121/0/@rss.e',
-                 'Celebrities': 'http://rss.walla.co.il/?w=/22/0/12/@rss.e',
-                 'Health': 'http://rss.walla.co.il/?w=/14/2500/0/@rss.e',
-                 'Sexuality': 'http://rss.walla.co.il/?w=/139/1877/0/@rss.e',
-                 'General Travel': 'http://rss.walla.co.il/?w=/14/2500/0/@rss.e',
-                 'Jewish': 'http://rss.walla.co.il/?w=/138/0/12/@rss.e',
-                 'Business': 'http://rss.walla.co.il/?w=/2/0/12/@rss.e',
-                 'Home Design': 'http://rss.walla.co.il/?w=/35/3237/0/@rss.e'}
+rss_map_walla = {}
+# news
+rss_map_walla['Quick_News'] = 'http://rss.walla.co.il/?w=/1/22/0/@rss.e'
+rss_map_walla['General News'] = 'http://rss.walla.co.il/?w=/1/0/12/@rss.e'
+rss_map_walla['Israel News'] = 'http://rss.walla.co.il/?w=/1/0/12/@rss.e'
+rss_map_walla['World News'] = 'http://rss.walla.co.il/?w=/1/2/0/@rss.e'
+rss_map_walla['Special News'] = 'http://rss.walla.co.il/?w=/1/5606/0/@rss.e'
+
+# Fashion
+rss_map_walla['Fashion News'] = 'http://rss.walla.co.il/?w=/24/2121/0/@rss.e'
+rss_map_walla['Summer'] = 'http://rss.walla.co.il/?w=/24/12336/0/@rss.e'
+rss_map_walla['Wedding'] = 'http://rss.walla.co.il/?w=/24/2143/0/@rss.e'
+rss_map_walla['Beauty Salon'] = 'http://rss.walla.co.il/?w=/24/2129/0/@rss.e'
+
+# Motors
+rss_map_walla['Motors News'] = 'http://rss.walla.co.il/?w=/31/0/12/@rss.e'
+rss_map_walla['Motorcycle'] = 'http://rss.walla.co.il/?w=/31/4739/0/@rss.e'
+rss_map_walla['Bicycle'] = 'http://rss.walla.co.il/?w=/31/4739/0/@rss.e'
+
+# Technology
+rss_map_walla['Technology News'] = 'http://rss.walla.co.il/?w=/6/0/12/@rss.e'
+rss_map_walla['Viral News'] = 'http://rss.walla.co.il/?w=/6/4027/0/@rss.e'
+rss_map_walla['Opinions'] = 'http://rss.walla.co.il/?w=/6/4027/0/@rss.e'
+
+# Celebrities
+rss_map_walla['Celebrities News'] = 'http://rss.walla.co.il/?w=/22/0/12/@rss.e'
+rss_map_walla['Local Celebrities'] = 'http://rss.walla.co.il/?w=/22/3601/0/@rss.e'
+rss_map_walla['World Celebrities'] = 'http://rss.walla.co.il/?w=/22/3602/0/@rss.e'
+rss_map_walla['The Swamp'] = 'http://rss.walla.co.il/?w=/22/3602/0/@rss.e'
+
+# LifeStyle
+rss_map_walla['Home-Design'] = 'http://rss.walla.co.il/?w=/35/0/12/@rss.e'
+rss_map_walla['Architecture'] = 'http://rss.walla.co.il/?w=/35/4410/0/@rss.e'
+rss_map_walla['HouseKeeping'] = 'http://rss.walla.co.il/?w=/35/4422/0/@rss.e'
+rss_map_walla['Child Rooms Design'] = 'http://rss.walla.co.il/?w=/35/4432/0/@rss.e'
+rss_map_walla['DIY'] = 'http://rss.walla.co.il/?w=/35/2858/0/@rss.e'
+rss_map_walla['Exterior Design'] = 'http://rss.walla.co.il/?w=/35/3237/0/@rss.e'
+
+# Travel
+rss_map_walla['Travel'] = 'http://rss.walla.co.il/?w=/14/0/12/@rss.e'
+rss_map_walla['Travel In Israel'] = 'http://rss.walla.co.il/?w=/14/5735/0/@rss.e'
+rss_map_walla['Travel In The World'] = 'http://rss.walla.co.il/?w=/14/779/0/@rss.e'
+rss_map_walla['Camping'] = 'http://rss.walla.co.il/?w=/14/787/0/@rss.e'
+rss_map_walla['Travel Tips'] = 'http://rss.walla.co.il/?w=/14/789/0/@rss.e'
+rss_map_walla['Summer-2017'] = 'http://rss.walla.co.il/?w=/14/12338/0/@rss.e'
+
+# Food
+rss_map_walla['Food News'] = 'http://rss.walla.co.il/?w=/9/905/0/@rss.e'
+rss_map_walla['Indian Food'] = 'http://rss.walla.co.il/?w=/9/12318/0/@rss.e'
+rss_map_walla['Wine And Alcohol'] = 'http://rss.walla.co.il/?w=/9/902/0/@rss.e'
+rss_map_walla['Healthy Eating'] = 'http://rss.walla.co.il/?w=/9/1141/0/@rss.e'
+rss_map_walla['Summer 2017'] = 'http://rss.walla.co.il/?w=/9/12335/0/@rss.e'
+
+# Health
+rss_map_walla['Health News'] = 'http://rss.walla.co.il/?w=/14/2500/0/@rss.e'
+rss_map_walla['Diet And Nutrition'] = 'http://rss.walla.co.il/?w=/139/585/0/@rss.e'
+rss_map_walla['Pregnancy'] = 'http://rss.walla.co.il/?w=/139/585/0/@rss.e'
+rss_map_walla['Sexuality'] = 'http://rss.walla.co.il/?w=/139/1877/0/@rss.e'
+rss_map_walla['Optimistic And Eyes'] = 'http://rss.walla.co.il/?w=/139/1877/0/@rss.e'
+
+# Culture
+rss_map_walla['Culture News'] = 'http://rss.walla.co.il/?w=/4/0/12/@rss.e'
+rss_map_walla['Television'] = 'http://rss.walla.co.il/?w=/4/271/0/@rss.e'
+rss_map_walla['Musical'] = 'http://rss.walla.co.il/?w=/4/272/0/@rss.e'
+rss_map_walla['Theater'] = 'http://rss.walla.co.il/?w=/4/270/0/@rss.e'
+rss_map_walla['Live Shows'] = 'http://rss.walla.co.il/?w=/4/12100/0/@rss.e'
+
+# Sport
+rss_map_walla['General Sport'] = 'http://rss.walla.co.il/?w=/3/0/12/@rss.el'
+rss_map_walla['Basketball'] = 'http://rss.walla.co.il/?w=/3/151/0/@rss.e'
+rss_map_walla['Soccer'] = 'http://rss.walla.co.il/?w=/3/156/0/@rss.e'
+rss_map_walla['Tennis'] = 'http://rss.walla.co.il/?w=/3/152/0/@rss.e'
+rss_map_walla['NBA'] = 'http://rss.walla.co.il/?w=/3/175/0/@rss.e'
+
+# Business
+rss_map_walla['Smart buying'] = 'http://rss.walla.co.il/?w=/2/12085/0/@rss.e'
+rss_map_walla['Business News'] = 'http://rss.walla.co.il/?w=/2/0/12/@rss.e'
+rss_map_walla['Advertising'] = 'http://rss.walla.co.il/?w=/2/123/0/@rss.e'
+rss_map_walla['Attorney and Lawyers'] = 'http://rss.walla.co.il/?w=/2/555/0/@rss.e'
 
 
 @contextmanager
@@ -57,6 +119,7 @@ chatup_db_context = partial(db_context, db_name=CHATUP_DB_NAME)
 
 ############################ RSS
 
+
 def get_walla_rss_by_subjet(subject, count):
     subject = rss_map_walla.get(subject)
     xml_sheet = feedparser.parse(subject)
@@ -77,7 +140,6 @@ def get_topics_by_sub_category_name(sub_category_name, count):
 
 
 ############################ RSS
-
 
 def get_user_image(email_address):
     email_address = email_address.lower()
