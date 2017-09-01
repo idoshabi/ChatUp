@@ -104,7 +104,8 @@ def get_email_subjects_list_by_sender(gmail_object, sender_email, count, filter_
         if not any(extension in subject for extension in FORBIDDEN_SUBJECT_STRINGS) and \
                 matching_keywords(filter_keywords, subject):
             subject = clean_subject(subject)
-            subjects.append(subject)
+            if subject.strip():
+                subjects.append(subject)
 
         if len(subjects) == count:
             return remove_duplicate_while_preserving_order(subjects)

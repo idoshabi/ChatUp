@@ -1,3 +1,5 @@
+import re
+
 import requests
 import sqlite3
 import feedparser
@@ -332,6 +334,14 @@ def fetch_and_insert_contacts_to_db(user_id, count):
     contacts = fetch_contacts(gmail_object, email, count=count)
 
     for contact_email in contacts:
+        try:
+            match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$',
+                             contact_email)
+            if match is None:
+                continue
+        except Exception:
+            continue
+
         with chatup_db_context() as cursor:
             user_id = get_user_id_by_email(cursor, email)
             image_src = get_user_image(contact_email)
