@@ -1,8 +1,7 @@
-import re
-
 import requests
 import sqlite3
 import feedparser
+import re
 
 from contextlib import contextmanager
 from functools import partial
@@ -142,6 +141,7 @@ def get_topics_by_sub_category_name(sub_category_name, count):
 
 
 ############################ RSS
+
 
 def get_user_image(email_address):
     email_address = email_address.lower()
@@ -353,6 +353,8 @@ def fetch_and_insert_contacts_to_db(user_id, count):
                                                 contact_email,
                                                 image_src,
                                                 name))
+
+
 
 
 """
