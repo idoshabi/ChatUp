@@ -13,18 +13,19 @@ NUM_OF_PREDEFINED_SUBCATEGORIES = 3
 EMPTY_AVATAR = "http://www.rammandir.ca/sites/default/files/default_images/defaul-avatar_0.jpg"
 
 map_ideas_name = "Ideas"
-rss_map_ynet = {'News': 'http://www.ynet.co.il/Integration/StoryRss3.xml',
-                'Food': 'http://www.ynet.co.il/Integration/StoryRss975.xml',
-                'Sport': 'http://www.ynet.co.il/Integration/StoryRss3.xml',
-                'Culture': 'http://www.ynet.co.il/Integration/StoryRss538.xml',
-                'Travel': 'http://www.ynet.co.il/Integration/StoryRss598.xml',
-                'Lifesyle': 'http://www.ynet.co.il/Integration/StoryRss4104.xml'}
+rss_map_ynet = {}
+rss_map_ynet['News'] = 'http://www.ynet.co.il/Integration/StoryRss3.xml'
+rss_map_ynet['Food'] = 'http://www.ynet.co.il/Integration/StoryRss975.xml'
+rss_map_ynet['Sport'] = 'http://www.ynet.co.il/Integration/StoryRss3.xml'
+rss_map_ynet['Culture'] = 'http://www.ynet.co.il/Integration/StoryRss538.xml'
+rss_map_ynet['Travel'] = 'http://www.ynet.co.il/Integration/StoryRss598.xml'
+rss_map_ynet['Lifesyle'] = 'http://www.ynet.co.il/Integration/StoryRss4104.xml'
 
 rss_map_walla = {}
 # news
 rss_map_walla['Quick_News'] = 'http://rss.walla.co.il/?w=/1/22/0/@rss.e'
 rss_map_walla['General News'] = 'http://rss.walla.co.il/?w=/1/0/12/@rss.e'
-rss_map_walla['Israel News'] = 'http://rss.walla.co.il/?w=/1/0/12/@rss.e'
+rss_map_walla['Israel News'] = 'http://rss.walla.co.il/?w=/1/1/0/@rss.e'
 rss_map_walla['World News'] = 'http://rss.walla.co.il/?w=/1/2/0/@rss.e'
 rss_map_walla['Special News'] = 'http://rss.walla.co.il/?w=/1/5606/0/@rss.e'
 
@@ -42,7 +43,7 @@ rss_map_walla['Bicycle'] = 'http://rss.walla.co.il/?w=/31/4739/0/@rss.e'
 # Technology
 rss_map_walla['Technology News'] = 'http://rss.walla.co.il/?w=/6/0/12/@rss.e'
 rss_map_walla['Viral News'] = 'http://rss.walla.co.il/?w=/6/4027/0/@rss.e'
-rss_map_walla['Opinions'] = 'http://rss.walla.co.il/?w=/6/4027/0/@rss.e'
+rss_map_walla['Opinions'] = 'http://rss.walla.co.il/?w=/6/4028/0/@rss.e'
 
 # Celebrities
 rss_map_walla['Celebrities News'] = 'http://rss.walla.co.il/?w=/22/0/12/@rss.e'
@@ -51,7 +52,7 @@ rss_map_walla['World Celebrities'] = 'http://rss.walla.co.il/?w=/22/3602/0/@rss.
 rss_map_walla['The Swamp'] = 'http://rss.walla.co.il/?w=/22/3602/0/@rss.e'
 
 # LifeStyle
-rss_map_walla['Home-Design'] = 'http://rss.walla.co.il/?w=/35/0/12/@rss.e'
+rss_map_walla['Home Design'] = 'http://rss.walla.co.il/?w=/35/0/12/@rss.e'
 rss_map_walla['Architecture'] = 'http://rss.walla.co.il/?w=/35/4410/0/@rss.e'
 rss_map_walla['HouseKeeping'] = 'http://rss.walla.co.il/?w=/35/4422/0/@rss.e'
 rss_map_walla['Child Rooms Design'] = 'http://rss.walla.co.il/?w=/35/4432/0/@rss.e'
@@ -74,11 +75,11 @@ rss_map_walla['Healthy Eating'] = 'http://rss.walla.co.il/?w=/9/1141/0/@rss.e'
 rss_map_walla['Summer 2017'] = 'http://rss.walla.co.il/?w=/9/12335/0/@rss.e'
 
 # Health
-rss_map_walla['Health News'] = 'http://rss.walla.co.il/?w=/14/2500/0/@rss.e'
+rss_map_walla['Health News'] = 'http://rss.walla.co.il/?w=/139/578/0/@rss.e'
 rss_map_walla['Diet And Nutrition'] = 'http://rss.walla.co.il/?w=/139/585/0/@rss.e'
-rss_map_walla['Pregnancy'] = 'http://rss.walla.co.il/?w=/139/585/0/@rss.e'
+rss_map_walla['Pregnancy'] = 'http://rss.walla.co.il/?w=/139/590/0/@rss.e'
 rss_map_walla['Sexuality'] = 'http://rss.walla.co.il/?w=/139/1877/0/@rss.e'
-rss_map_walla['Optimistic And Eyes'] = 'http://rss.walla.co.il/?w=/139/1877/0/@rss.e'
+rss_map_walla['Optimistic And Eyes'] = 'http://rss.walla.co.il/?w=/139/1881/0/@rss.ee'
 
 # Culture
 rss_map_walla['Culture News'] = 'http://rss.walla.co.il/?w=/4/0/12/@rss.e'
@@ -141,7 +142,6 @@ def get_topics_by_sub_category_name(sub_category_name, count):
 
 
 ############################ RSS
-
 
 def get_user_image(email_address):
     email_address = email_address.lower()
@@ -335,8 +335,9 @@ def fetch_and_insert_contacts_to_db(user_id, count):
 
     for contact_email in contacts:
         try:
-            match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$',
-                             contact_email)
+            match = re.match(
+                '^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$',
+                contact_email)
             if match is None:
                 continue
         except Exception:
@@ -353,8 +354,6 @@ def fetch_and_insert_contacts_to_db(user_id, count):
                                                 contact_email,
                                                 image_src,
                                                 name))
-
-
 
 
 """
